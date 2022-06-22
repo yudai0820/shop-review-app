@@ -1,14 +1,8 @@
-import { StatusBar } from 'expo-status-bar';
+import { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import { Shop } from './src/types/shop';
 
-export default function App() {
-  return (
-    <View style={styles.container}>
-      <Text>Open up App.tsx to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
-  );
-}
+import { getShops } from './src/lib/firebase';
 
 const styles = StyleSheet.create({
   container: {
@@ -18,3 +12,25 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 });
+
+export default function App() {
+  const [shops, setShops] = useState<Shop[]>([]);
+
+  useEffect(() => {
+    getFirebaseItems();
+  }, []);
+
+  const getFirebaseItems = async () => {
+    const shops = await getShops();
+    setShops(shops);
+  };
+
+  const shopItems = shops.map((shop, index) => (
+    <View style={{ margin: 10 }} key={index.toString()}>
+      <Text>{shop.name}</Text>
+      <Text>{shop.place}</Text>
+    </View>
+  ));
+
+  return <View style={styles.container}>{shopItems}</View>;
+}
