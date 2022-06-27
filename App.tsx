@@ -1,8 +1,9 @@
 import { useEffect, useState } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, FlatList, View, SafeAreaView } from 'react-native';
 import { Shop } from './src/types/shop';
 
 import { getShops } from './src/lib/firebase';
+import { ShopReviewItem } from './src/components/ShopReviewItem';
 
 const styles = StyleSheet.create({
   container: {
@@ -25,12 +26,16 @@ export default function App() {
     setShops(shops);
   };
 
-  const shopItems = shops.map((shop, index) => (
-    <View style={{ margin: 10 }} key={index.toString()}>
-      <Text>{shop.name}</Text>
-      <Text>{shop.place}</Text>
-    </View>
-  ));
+  const shopItems = shops.map((shop, index) => <ShopReviewItem shop={shop} key={index.toString()} />);
 
-  return <View style={styles.container}>{shopItems}</View>;
+  return (
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={shops}
+        renderItem={({ item }: { item: Shop }) => <ShopReviewItem shop={item} />}
+        keyExtractor={(item, index) => index.toString()}
+        numColumns={2}
+      ></FlatList>
+    </SafeAreaView>
+  );
 }
