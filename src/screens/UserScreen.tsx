@@ -1,15 +1,21 @@
-import { StyleSheet, SafeAreaView, Text } from 'react-native';
+import { useState, useContext } from 'react';
+import { StyleSheet, SafeAreaView } from 'react-native';
+import firebase from 'firebase';
+import { updateUser } from '../lib/firebase';
+/* component */
+import { Form } from '../components/Form';
+import { Button } from '../components/Button';
 /* types */
 import { StackNavigationProp } from '@react-navigation/stack';
 import { RootStackParamList } from '../types/navigation';
 import { RouteProp } from '@react-navigation/native';
+import { UserContext } from '../contexts/userContext';
+import { Loading } from '../components/Loading';
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
   },
 });
 
@@ -19,9 +25,29 @@ type Props = {
 };
 
 export const UserScreen: React.FC<Props> = ({ navigation, route }: Props) => {
+  const { user, setUser } = useContext(UserContext);
+  const [name, setName] = useState<string>(user.name);
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const onSubmit = async () => {
+    setLoading(true);
+    const updatedAt = firebase.firestore.Timestamp.now();
+    await updateUser(user.id, { name, updatedAt });
+    setUser({ ...user, name, updatedAt });
+    setLoading(false);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      <Text>User Screen</Text>
+      <Form
+        value={name}
+        onChangeText={(text) => {
+          setName(text);
+        }}
+        label='名前'
+      />
+      <Button onPress={onSubmit} text='保存する' />
+      <Loading visible={loading} />
     </SafeAreaView>
   );
 };
