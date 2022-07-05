@@ -5,7 +5,7 @@ const styles = StyleSheet.create({
     padding: 16,
   },
   input: {
-    height: 120,
+    height: 40,
     borderColor: '#999',
     borderBottomWidth: 1,
     marginTop: 8,
@@ -31,7 +31,6 @@ export const TextArea: React.FC<Props> = ({ value, onChangeText, label, height, 
         style={styles.input}
         onChangeText={(text) => onChangeText(text)}
         value={value}
-        multiline={true}
         placeholder={placeholder}
       />
     </View>
